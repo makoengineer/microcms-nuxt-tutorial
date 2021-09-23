@@ -1,3 +1,5 @@
+import { client } from './utils/microcms';
+
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
@@ -52,5 +54,19 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
+  generate: {
+    async routes() {
+        const pages = await client.get({
+          endpoint: 'blog',
+        })
+        .then((res) =>
+          res.contents.map((content) => ({
+            route: `/${content.id}`,
+            payload: content
+          }))
+        )
+      return pages
+    }
+  },
 }
